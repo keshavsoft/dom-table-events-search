@@ -1,13 +1,13 @@
 {
-  "name": "dom-table-events",
-  "version": "1.1.0",
+  "name": "dom-table-events-search",
+  "version": "1.2.1",
   "description": "Pre-cooked table event workflows, container delegation, and action dispatchers for component tables",
   "type": "module",
   "license": "MIT",
   "author": "KeshavSoft",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/keshavsoft/dom-table-events.git"
+    "url": "git+https://github.com/keshavsoft/dom-table-events-search.git"
   },
   "main": "./src/index.js",
   "exports": {
