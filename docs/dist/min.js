@@ -7,31 +7,42 @@ var e = {
 		meta: e,
 		bindTableEvents: t
 	});
-}, n = ({ currentTbody: e, filteredRecords: t, columns: n, options: r = { serial: !0 } } = {}) => {
+}, n = (e) => {
+	if (!e) return null;
+	if (e.tagName === "tbody") return e;
+	if (Array.isArray(e.children)) for (let t of e.children) {
+		let e = n(t);
+		if (e) return e;
+	}
+	return null;
+}, r = ({ currentTbody: e, filteredRecords: t, columns: r, options: i = { serial: !0 } } = {}) => {
 	if (!e) return;
-	let i = globalThis.window?.ks || globalThis.ks, a = i?.jsonRenderers?.runInstructions?.render?.renderFunc, o = i?.jsonToTag?.buildSpecElement;
-	if (typeof a == "function" && typeof o == "function") {
-		let i = a({
+	let a = globalThis.window?.ks || globalThis.ks, o = a?.jsonRenderers?.runInstructions?.render?.renderFunc, s = a?.jsonToTag?.buildSpecElement;
+	if (typeof o == "function" && typeof s == "function") {
+		let a = n(o({
 			instructionMainKey: "table",
-			instructionSubKey: "bodyOnly",
+			instructionSubKey: i && i.options && typeof i.options == "object" ? "simple" : "bodyOnly",
 			data: {
 				data: t,
-				columns: n
+				columns: r
 			},
-			options: r
-		}), s = o(i?.children?.find((e) => e.tagName === "tbody") || i);
-		s && e.replaceWith(s);
+			options: i
+		}));
+		if (a) {
+			let t = s(a);
+			t && e.replaceWith(t);
+		}
 	}
-}, r = ({ input: e, rootElement: t, data: r = [], columns: i = [], options: a = { serial: !0 } } = {}) => {
+}, i = ({ input: e, rootElement: t, data: n = [], columns: i = [], options: a = { serial: !0 } } = {}) => {
 	if (!e || !t) return;
-	let o = (e.value || "").trim().toLowerCase(), s = o ? r.filter((e) => Object.values(e).some((e) => String(e ?? "").toLowerCase().includes(o))) : r, c = (e.closest("table") || t.querySelector("table"))?.querySelector("tbody");
-	c && n({
+	let o = (e.value || "").trim().toLowerCase(), s = o ? n.filter((e) => Object.values(e).some((e) => String(e ?? "").toLowerCase().includes(o))) : n, c = (e.closest("table") || t.querySelector("table"))?.querySelector("tbody");
+	c && r({
 		currentTbody: c,
 		filteredRecords: s,
 		columns: i,
 		options: a
 	});
-}, i = ({ container: e, data: t, columns: n = [], options: i = { serial: !0 } } = {}) => {
+}, a = ({ container: e, data: t, columns: n = [], options: r = { serial: !0 } } = {}) => {
 	let a = typeof e == "string" ? document.getElementById(e) : e;
 	if (!a) {
 		console.warn("[dom-table-events-search] Container element not found:", e);
@@ -40,14 +51,14 @@ var e = {
 	let o = t;
 	a.addEventListener("input", (e) => {
 		let t = e.target;
-		t.matches("input[type='search'], input[name='search'], [data-role='table-search'], #tableSearch, .table-search-input") && r({
+		t.matches("input[type='search'], input[name='search'], [data-role='table-search'], #tableSearch, .table-search-input") && i({
 			input: t,
 			rootElement: a,
 			data: o,
 			columns: n,
-			options: i
+			options: r
 		});
 	});
-}, a = i;
-t(i);
-export { i as bindTableEvents, a as default };
+}, o = a;
+t(a);
+export { a as bindTableEvents, o as default };

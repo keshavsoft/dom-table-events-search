@@ -1,6 +1,6 @@
 {
   "name": "dom-table-events-search",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Pre-cooked table event workflows, container delegation, and action dispatchers for component tables",
   "type": "module",
   "license": "MIT",
