@@ -1,58 +1,45 @@
-import state from "./state.js";
 import { onSearch } from "./actions/onSearch.js";
-import { onRowClick } from "./actions/onRowClick.js";
-import { onButtonClick } from "./actions/onButtonClick.js";
 
 /**
- * Binds delegated table events to the main container.
- * Completely eliminates brittle ID dependencies by using semantic HTML delegation.
+ * Binds search event delegation to the table container.
+ * Completely stateless: keeps data and columns in the event closure,
+ * drills down to the table's <tbody> on input, and swaps only the rows.
  *
- * @param {object} options
- * @param {string|HTMLElement} options.container - Root container ID or element.
- * @param {Array<object>} options.dataset - The backing table dataset.
- * @param {Array<object>} [options.columns=[]] - Column schema definitions.
- * @param {Function} [options.renderTable] - Callback to re-render the table with updated data.
- * @param {Function} [options.onRowClick] - Callback invoked when a body row is clicked.
- * @param {Function} [options.onRowAction] - Callback invoked when an action button is clicked (e.g. "show", "delete").
- * @param {Function} [options.onFooterSave] - Callback invoked when a footer save button is clicked.
- * @param {Function} [options.onSearch] - Callback invoked on search query input.
- * @param {Function} [options.setFeedback] - Custom feedback message handler.
- * @returns {object} - Active state manager instance.
+ * @param {object} config
+ * @param {string|HTMLElement} config.container - Root container ID or element.
+ * @param {Array<object>} [config.data] - Data rows.
+ * @param {Array<object>} [config.dataset] - Data rows (alias for data).
+ * @param {Array<object>} [config.columns=[]] - Column definitions.
+ * @param {object} [config.options={ serial: true }] - Rendering options.
  */
 export const bindTableEvents = ({
     container,
-    dataset = [],
+    data,
     columns = [],
-    renderTable = null,
+    options = { serial: true }
 } = {}) => {
     const rootElement = typeof container === "string" ? document.getElementById(container) : container;
 
     if (!rootElement) {
-        console.warn("[dom-table-events] Container element not found:", container);
-        return null;
+        console.warn("[dom-table-events-search] Container element not found:", container);
+        return;
     }
 
-    // Initialize reactive state
-    state.init({
-        container: rootElement,
-        dataset,
-        columns,
-        renderTable,
-        onRowClick,
-        onRowAction,
-        onFooterSave,
-        onSearch: onSearchCallback,
-        setFeedback
-    });
+    const rows = data;
+
     // Delegated input listener for table search
     rootElement.addEventListener("input", (event) => {
         const input = event.target;
         if (input.matches("input[type='search'], input[name='search'], [data-role='table-search'], #tableSearch, .table-search-input")) {
-            onSearch(event, input);
+            onSearch({
+                input,
+                rootElement,
+                data: rows,
+                columns,
+                options
+            });
         }
     });
-
-    return state;
 };
 
 export default bindTableEvents;

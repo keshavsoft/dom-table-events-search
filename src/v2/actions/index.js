@@ -1,15 +1,12 @@
 export { onSearch } from "./onSearch.js";
-export { onRowClick } from "./onRowClick.js";
-export { onButtonClick } from "./onButtonClick.js";
+export { repaintBody } from "./repaintBody.js";
 
 import onSearch from "./onSearch.js";
-import onRowClick from "./onRowClick.js";
-import onButtonClick from "./onButtonClick.js";
+import repaintBody from "./repaintBody.js";
 
 export const actions = {
     onSearch,
-    onRowClick,
-    onButtonClick
+    repaintBody
 };
 
 export default actions;

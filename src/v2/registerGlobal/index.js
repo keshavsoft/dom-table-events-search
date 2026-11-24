@@ -1,15 +1,15 @@
 import meta from "./meta.js";
 
-export const registerGlobal = (domTableEvents) => {
-    if (typeof globalThis === "undefined" || !domTableEvents) return;
+const registerGlobal = (bindTableEvents) => {
+    if (typeof globalThis === "undefined" || !bindTableEvents) return;
 
     globalThis.ks ??= {};
+    globalThis.ks.domEvents ??= {};
+    globalThis.ks.domEvents.table ??= {};
 
-    globalThis.ks.domTableEvents = {
+    globalThis.ks.domEvents.table = {
         meta,
-        bindTableEvents: domTableEvents.bindTableEvents,
-        actions: domTableEvents.actions,
-        state: domTableEvents.state
+        bindTableEvents
     };
 };
 

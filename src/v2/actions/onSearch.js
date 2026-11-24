@@ -1,38 +1,49 @@
-import { table } from "dom-traversal-functions";
-import state from "../state.js";
+import { repaintBody } from "./repaintBody.js";
 
 /**
- * Delegated search handler. Extracts query and filters the table dataset.
+ * Handles table search input event.
+ * Filters data, drills down to the table's <tbody>, repaints in-place, and updates feedback badge.
  *
- * @param {Event} event - Input event.
- * @param {HTMLElement} matchElement - Search input element.
+ * @param {object} params
+ * @param {HTMLInputElement} params.input - Search input element.
+ * @param {HTMLElement} params.rootElement - Table container element.
+ * @param {Array<object>} params.data - Original dataset.
+ * @param {Array<object>} params.columns - Table columns schema.
+ * @param {object} [params.options] - Table options.
  */
-export const onSearch = (event, matchElement) => {
-    const query = table.header.getSearchQuery(matchElement);
+export const onSearch = ({
+    input,
+    rootElement,
+    data = [],
+    columns = [],
+    options = { serial: true }
+} = {}) => {
+    if (!input || !rootElement) return;
 
+    const query = (input.value || "").trim().toLowerCase();
+
+    // 1. Filter supplied data
     const filtered = query
-        ? state.dataset.filter(item =>
+        ? data.filter(item =>
             Object.values(item).some(val =>
                 String(val ?? "").toLowerCase().includes(query)
             )
         )
-        : state.dataset;
+        : data;
 
-    state.filteredData = filtered;
+    // 2. Discover table and drill down to tbody
+    const tableEl = input.closest("table") || rootElement.querySelector("table");
+    const currentTbody = tableEl?.querySelector("tbody");
 
-    if (typeof state.renderTable === "function") {
-        state.renderTable(filtered);
-    }
-
-    const message = query
-        ? `Showing ${filtered.length} of ${state.dataset.length} records matching "${matchElement?.value?.trim() || ""}".`
-        : `Showing all ${state.dataset.length} records.`;
-
-    state.notifyFeedback(message);
-
-    if (typeof state.onSearch === "function") {
-        state.onSearch(query, filtered);
-    }
+    // 3. Surgically repaint tbody
+    if (currentTbody) {
+        repaintBody({
+            currentTbody,
+            filteredRecords: filtered,
+            columns,
+            options
+        });
+    };
 };
 
 export default onSearch;
